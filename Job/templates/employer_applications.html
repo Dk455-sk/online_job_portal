@@ -1,0 +1,359 @@
+{% extends "employer_base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+<div>
+<h3 class="fw-bold mb-0">Job Applications</h3>
+<small class="text-muted">Manage applicants for your jobs</small>
+</div>
+
+</div>
+
+
+<!-- DESKTOP TABLE -->
+
+<div class="card shadow-sm border-0 rounded-4 d-none d-lg-block">
+
+<div class="card-body table-responsive">
+
+<table class="table table-hover align-middle text-center">
+
+<thead class="table-dark">
+
+<tr>
+<th>Photo</th>
+<th>Applicant</th>
+<th>Qualification</th>
+<th>Experience</th>
+<th>Resume</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for app in applications %}
+{% with profile=app.applicant.jobseeker_profile_set.first %}
+
+<tr>
+
+<td>
+
+{% if profile and profile.Image %}
+<img src="{{ profile.Image.url }}"
+class="rounded-circle"
+style="width:50px;height:50px;object-fit:cover;">
+{% else %}
+<img src="{% static 'images/default-user.png' %}"
+class="rounded-circle"
+style="width:50px;height:50px;">
+{% endif %}
+
+</td>
+
+
+<td class="fw-semibold">
+
+{{ app.applicant.name }}
+
+</td>
+
+
+<td>
+
+{% if profile %}
+{{ profile.qualification }}
+{% else %}
+<span class="text-muted">N/A</span>
+{% endif %}
+
+</td>
+
+
+<td>
+
+{% if profile %}
+{{ profile.experience_years }} Years
+{% else %}
+<span class="text-muted">N/A</span>
+{% endif %}
+
+</td>
+
+
+<td>
+
+{% if profile and profile.resume %}
+
+<a href="{{ profile.resume.url }}"
+class="btn btn-sm btn-outline-primary"
+target="_blank">
+
+<i class="bi bi-download"></i> Resume
+
+</a>
+
+{% else %}
+
+<span class="text-muted">No Resume</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+{% if app.status == "Pending" %}
+<span class="badge bg-warning text-dark">Pending</span>
+
+{% elif app.status == "Accepted" %}
+<span class="badge bg-success">Accepted</span>
+
+{% else %}
+<span class="badge bg-danger">Rejected</span>
+{% endif %}
+
+</td>
+
+
+<td>
+
+{% if app.status == "Pending" %}
+
+<form method="post" class="d-flex gap-2 justify-content-center">
+
+{% csrf_token %}
+
+<input type="hidden" name="app_id" value="{{ app.id }}">
+
+<button name="action"
+value="accept"
+class="btn btn-success btn-sm">
+
+<i class="bi bi-check"></i>
+
+</button>
+
+<button name="action"
+value="reject"
+class="btn btn-danger btn-sm">
+
+<i class="bi bi-x"></i>
+
+</button>
+
+</form>
+
+{% else %}
+
+<span class="text-muted">Completed</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endwith %}
+{% empty %}
+
+<tr>
+<td colspan="7" class="text-muted text-center">
+No Applications Yet
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- MOBILE VIEW -->
+
+<div class="row g-3 d-lg-none">
+
+{% for app in applications %}
+{% with profile=app.applicant.jobseeker_profile_set.first %}
+
+<div class="col-12">
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+<!-- USER INFO -->
+
+<div class="d-flex align-items-center mb-3">
+
+{% if profile and profile.Image %}
+<img src="{{ profile.Image.url }}"
+class="rounded-circle me-3"
+style="width:55px;height:55px;object-fit:cover;">
+{% else %}
+<img src="{% static 'images/default-user.png' %}"
+class="rounded-circle me-3"
+style="width:55px;height:55px;">
+{% endif %}
+
+<div>
+
+<h6 class="mb-0 fw-bold">
+{{ app.applicant.name }}
+</h6>
+
+<small class="text-muted">
+
+{% if profile %}
+{{ profile.qualification }}
+{% else %}
+N/A
+{% endif %}
+
+</small>
+
+</div>
+
+</div>
+
+
+<!-- EXPERIENCE -->
+
+<p class="mb-1">
+
+<strong>Experience:</strong>
+
+{% if profile %}
+{{ profile.experience_years }} Years
+{% else %}
+N/A
+{% endif %}
+
+</p>
+
+
+<!-- STATUS -->
+
+<p class="mb-3">
+
+<strong>Status:</strong>
+
+{% if app.status == "Pending" %}
+<span class="badge bg-warning text-dark">Pending</span>
+
+{% elif app.status == "Accepted" %}
+<span class="badge bg-success">Accepted</span>
+
+{% else %}
+<span class="badge bg-danger">Rejected</span>
+{% endif %}
+
+</p>
+
+
+<!-- ACTION BUTTONS -->
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+{% if profile and profile.resume %}
+
+<a href="{{ profile.resume.url }}"
+class="btn btn-outline-primary btn-sm">
+
+<i class="bi bi-download"></i> Resume
+
+</a>
+
+{% endif %}
+
+
+{% if app.status == "Pending" %}
+
+<form method="post" class="d-flex gap-2 flex-grow-1">
+
+{% csrf_token %}
+
+<input type="hidden" name="app_id" value="{{ app.id }}">
+
+<button name="action"
+value="accept"
+class="btn btn-success btn-sm flex-fill">
+
+<i class="bi bi-check"></i>
+
+</button>
+
+<button name="action"
+value="reject"
+class="btn btn-danger btn-sm flex-fill">
+
+<i class="bi bi-x"></i>
+
+</button>
+
+</form>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endwith %}
+{% endfor %}
+
+</div>
+
+</div>
+
+
+<style>
+
+/* Card styling */
+
+.card{
+border-radius:14px;
+}
+
+/* Table header */
+
+.table th{
+font-weight:600;
+}
+
+/* Mobile adjustments */
+
+@media (max-width:768px){
+
+.card-body{
+padding:18px;
+}
+
+h6{
+font-size:15px;
+}
+
+}
+
+</style>
+
+{% endblock %}

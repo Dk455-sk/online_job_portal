@@ -1,0 +1,333 @@
+{% extends "employer_base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- PAGE TITLE -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div>
+<h3 class="fw-bold mb-0">Employer Profile</h3>
+<small class="text-muted">Manage your company profile</small>
+</div>
+
+</div>
+
+
+<div class="row justify-content-center">
+
+<div class="col-lg-10">
+
+<div class="card shadow-sm border-0 rounded-4">
+
+<div class="card-body p-4">
+
+<form method="post">
+{% csrf_token %}
+
+<div class="row g-3">
+
+<!-- NAME -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Full Name</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-person"></i>
+</span>
+
+<input type="text"
+name="name"
+value="{{ data.name }}"
+class="form-control"
+required>
+
+</div>
+
+</div>
+
+
+<!-- EMAIL -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Email</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-envelope"></i>
+</span>
+
+<input type="email"
+name="email"
+value="{{ data.email }}"
+class="form-control"
+readonly>
+
+</div>
+
+</div>
+
+
+<!-- PASSWORD -->
+
+<div class="col-md-6 mb-2 position-relative">
+
+<label class="form-label fw-semibold">Password</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-lock"></i>
+</span>
+
+<input type="password"
+name="pwd"
+placeholder="Enter new password"
+class="form-control"
+id="password">
+
+<button type="button"
+class="btn btn-outline-secondary"
+onclick="togglePassword()">
+
+<i class="bi bi-eye"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- MOBILE -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Mobile</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-telephone"></i>
+</span>
+
+<input type="text"
+name="mobile"
+value="{{ data.mobile }}"
+class="form-control"
+required>
+
+</div>
+
+</div>
+
+
+<!-- ADDRESS -->
+
+<div class="col-12 mb-2">
+
+<label class="form-label fw-semibold">Address</label>
+
+<textarea name="adds"
+class="form-control"
+rows="2">{{ data.address }}</textarea>
+
+</div>
+
+
+<hr class="my-4">
+
+<h5 class="fw-bold mb-3">Company Information</h5>
+
+
+<!-- EMPLOYEE ID -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Employee ID</label>
+
+<input type="text"
+name="empid"
+value="{{ profile.empid }}"
+class="form-control">
+
+</div>
+
+
+<!-- DESIGNATION -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Designation</label>
+
+<input type="text"
+name="desg"
+value="{{ profile.Designation }}"
+class="form-control">
+
+</div>
+
+
+<!-- JOB PROFILE -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Job Profile</label>
+
+<input type="text"
+name="jprofile"
+value="{{ profile.job_profile }}"
+class="form-control">
+
+</div>
+
+
+<!-- COMPANY NAME -->
+
+<div class="col-md-6 mb-2">
+
+<label class="form-label fw-semibold">Company Name</label>
+
+<input type="text"
+name="cname"
+value="{{ profile.company_name }}"
+class="form-control">
+
+</div>
+
+
+<!-- COMPANY DETAILS -->
+
+<div class="col-12 mb-2">
+
+<label class="form-label fw-semibold">Company Details</label>
+
+<textarea name="cdetails"
+class="form-control"
+rows="3">{{ profile.company_details }}</textarea>
+
+</div>
+
+
+<!-- COMPANY ADDRESS -->
+
+<div class="col-12 mb-2">
+
+<label class="form-label fw-semibold">Company Address</label>
+
+<textarea name="caddress"
+class="form-control"
+rows="3">{{ profile.company_address }}</textarea>
+
+</div>
+
+
+<!-- WEBSITE -->
+
+<div class="col-12 mb-2">
+
+<label class="form-label fw-semibold">Company Website</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-globe"></i>
+</span>
+
+<input type="url"
+name="cweb"
+value="{{ profile.company_website }}"
+class="form-control"
+placeholder="https://example.com">
+
+</div>
+
+</div>
+
+
+<!-- SUBMIT BUTTON -->
+
+<div class="col-12 text-center mt-4">
+
+<button class="btn btn-primary px-5 py-2 rounded-pill shadow">
+
+<i class="bi bi-save me-2"></i>
+Update Profile
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function togglePassword(){
+
+const passwordInput = document.getElementById("password")
+
+if(passwordInput.type === "password"){
+
+passwordInput.type = "text"
+
+}else{
+
+passwordInput.type = "password"
+
+}
+
+}
+
+</script>
+
+
+<style>
+
+.card{
+border-radius:14px;
+}
+
+.form-control{
+border-radius:8px;
+padding:10px;
+}
+
+.input-group-text{
+background:#f1f5f9;
+}
+
+@media (max-width:768px){
+
+.card-body{
+padding:20px;
+}
+
+h3{
+font-size:20px;
+}
+
+}
+
+</style>
+
+{% endblock %}

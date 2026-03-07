@@ -1,0 +1,47 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+
+    <!-- Logo -->
+    <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+    <img src="{% static 'images/logo.png' %}" height="60" class="me-2">
+    <!-- <span class="text-white">ResearchsJob</span> -->
+</a>
+
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Menu -->
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">FAQs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+
+      <!-- Search -->
+      <!-- <form class="d-flex me-3" role="search">
+        <input class="form-control form-control-dark bg-dark text-white" type="search" placeholder="Search..." aria-label="Search">
+      </form> -->
+
+      <!-- Login & Signup -->
+      <div class="d-flex">
+        <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Login</a>
+        <a class="btn btn-warning" href="{% url 'register' %}">Sign-up</a>
+      </div>
+    </div>
+
+  </div>
+</nav>

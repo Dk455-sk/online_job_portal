@@ -1,0 +1,199 @@
+{% extends "employer_base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+<h3 class="fw-bold mb-2">Welcome, {{ ename|title }}</h3>
+
+<a href="{% url 'jobpost' %}" class="btn btn-primary">
+<i class="bi bi-plus-circle"></i> Post Job
+</a>
+
+</div>
+
+
+<!-- DASHBOARD CARDS -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-12 col-sm-6 col-lg-3">
+
+<div class="card dashboard-card shadow-sm text-center p-3">
+
+<i class="bi bi-briefcase fs-1 text-primary"></i>
+
+<h4 class="mt-2">{{ edata|length }}</h4>
+
+<p class="mb-0 text-muted">Total Jobs</p>
+
+</div>
+
+</div>
+
+
+<div class="col-12 col-sm-6 col-lg-3">
+
+<div class="card dashboard-card shadow-sm text-center p-3">
+
+<i class="bi bi-people fs-1 text-success"></i>
+
+<h4>0</h4>
+
+<p class="mb-0 text-muted">Applicants</p>
+
+</div>
+
+</div>
+
+
+<div class="col-12 col-sm-6 col-lg-3">
+
+<div class="card dashboard-card shadow-sm text-center p-3">
+
+<i class="bi bi-eye fs-1 text-warning"></i>
+
+<h4>0</h4>
+
+<p class="mb-0 text-muted">Views</p>
+
+</div>
+
+</div>
+
+
+<div class="col-12 col-sm-6 col-lg-3">
+
+<div class="card dashboard-card shadow-sm text-center p-3">
+
+<i class="bi bi-bar-chart fs-1 text-danger"></i>
+
+<h4>0</h4>
+
+<p class="mb-0 text-muted">Applications Today</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- JOB LIST -->
+
+<div class="card shadow-sm border-0">
+
+<div class="card-header bg-white">
+
+<h5 class="mb-0">Your Job Listings</h5>
+
+</div>
+
+<div class="card-body table-responsive">
+
+<table class="table table-hover align-middle">
+
+<thead class="table-dark">
+
+<tr>
+
+<th>Job</th>
+
+<th class="d-none d-md-table-cell">Type</th>
+
+<th class="d-none d-md-table-cell">Location</th>
+
+<th class="d-none d-lg-table-cell">Experience</th>
+
+<th>Vacancies</th>
+
+<th class="d-none d-lg-table-cell">Opening</th>
+
+<th class="d-none d-lg-table-cell">Closing</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for job in edata %}
+
+<tr>
+
+<td>
+
+<strong>{{ job.Job_name }}</strong>
+
+<br>
+
+<small class="text-muted">{{ job.Job_skill }}</small>
+
+</td>
+
+<td class="d-none d-md-table-cell">{{ job.Job_Type }}</td>
+
+<td class="d-none d-md-table-cell">{{ job.Location }}</td>
+
+<td class="d-none d-lg-table-cell">{{ job.Experience }}</td>
+
+<td>{{ job.vacancies }}</td>
+
+<td class="d-none d-lg-table-cell">{{ job.opening_date }}</td>
+
+<td class="d-none d-lg-table-cell">{{ job.closing_date }}</td>
+
+<td>
+
+<a href="#" class="btn btn-sm btn-outline-primary mb-1">
+
+Edit
+
+</a>
+
+<a href="{% url 'job_delete' job.id %}"
+
+class="btn btn-sm btn-outline-danger"
+
+onclick="return confirm('Delete this job?');">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="8" class="text-center text-muted">
+
+No jobs posted yet.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

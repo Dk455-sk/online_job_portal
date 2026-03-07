@@ -1,0 +1,304 @@
+{% extends "jobseeker_base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+<div>
+<h3 class="fw-bold mb-0">Available Jobs</h3>
+<p class="text-muted mb-0">Find the best opportunity for your career</p>
+</div>
+
+</div>
+
+
+<!-- SEARCH FILTER -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+<div class="card-body">
+
+<form method="get">
+
+<div class="row g-3">
+
+<div class="col-lg-4 col-md-6">
+
+<input type="text"
+class="form-control"
+name="keyword"
+placeholder="Search job, skill or company"
+value="{{ request.GET.keyword }}">
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<input type="text"
+class="form-control"
+name="location"
+placeholder="Location"
+value="{{ request.GET.location }}">
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<select name="type" class="form-select">
+
+<option value="">All Job Types</option>
+<option value="FullTime">Full Time</option>
+<option value="PartTime">Part Time</option>
+<option value="Contract">Contract</option>
+<option value="Internship">Internship</option>
+
+</select>
+
+</div>
+
+<div class="col-lg-2 col-md-6">
+
+<button class="btn btn-primary w-100">
+Search
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+
+
+<!-- JOB LIST -->
+
+<div class="row g-4">
+
+{% for data in edata %}
+
+<div class="col-xl-4 col-lg-6 col-md-6">
+
+<div class="card job-card border-0 shadow-sm h-100">
+
+<div class="card-body d-flex flex-column">
+
+
+<!-- HEADER -->
+
+<div class="d-flex justify-content-between align-items-start">
+
+<div>
+
+<h5 class="fw-bold mb-1">
+{{ data.Job_name }}
+</h5>
+
+<p class="text-muted mb-1">
+
+<i class="bi bi-building"></i>
+{{ data.employee.company_Name }}
+
+</p>
+
+<p class="text-muted small mb-0">
+
+<i class="bi bi-geo-alt"></i>
+{{ data.Location }}
+
+</p>
+
+</div>
+
+<span class="badge bg-primary">
+{{ data.Job_Type }}
+</span>
+
+</div>
+
+
+<!-- SKILLS -->
+
+<div class="mt-3">
+
+<span class="badge skill-badge">
+{{ data.Job_Skill }}
+</span>
+
+<span class="badge skill-badge">
+{{ data.Experience }} yrs
+</span>
+
+<span class="badge skill-badge">
+{{ data.Qualification }}
+</span>
+
+<span class="badge bg-success">
+{{ data.vacancies }} Vacancies
+</span>
+
+</div>
+
+
+<!-- COMPANY DETAILS -->
+
+<p class="text-muted small mt-3 flex-grow-1">
+
+{{ data.employee.company_details|truncatechars:120 }}
+
+</p>
+
+
+<!-- DATE -->
+
+<div class="d-flex justify-content-between small text-muted mb-3">
+
+<span>
+Opening: {{ data.opening_date }}
+</span>
+
+<span>
+Closing: {{ data.closing_date }}
+</span>
+
+</div>
+
+
+
+<!-- ACTION BUTTONS -->
+
+<div class="d-flex flex-wrap gap-2">
+
+<form method="post">
+{% csrf_token %}
+
+<input type="hidden" name="job_id" value="{{ data.id }}">
+<input type="hidden" name="action" value="apply">
+
+<button class="btn btn-primary btn-sm flex-fill">
+<i class="bi bi-send"></i> Apply
+</button>
+
+</form>
+
+
+<form method="post">
+{% csrf_token %}
+
+<input type="hidden" name="job_id" value="{{ data.id }}">
+<input type="hidden" name="action" value="save">
+
+<button class="btn btn-outline-secondary btn-sm flex-fill">
+<i class="bi bi-bookmark"></i> Save
+</button>
+
+</form>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+<div class="alert alert-warning text-center">
+
+No jobs available right now.
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+
+
+<!-- MESSAGE ALERT -->
+
+{% if messages %}
+
+<div class="container mt-3">
+
+{% for message in messages %}
+
+<div class="alert alert-warning">
+{{ message }}
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<style>
+
+/* JOB CARD */
+
+.job-card{
+border-radius:14px;
+transition:0.3s;
+}
+
+.job-card:hover{
+transform:translateY(-6px);
+box-shadow:0 15px 30px rgba(0,0,0,0.12);
+}
+
+
+/* SKILL BADGES */
+
+.skill-badge{
+background:#f1f5f9;
+color:#333;
+border:1px solid #e2e8f0;
+margin-right:5px;
+padding:6px 10px;
+}
+
+
+/* MOBILE DESIGN */
+
+@media (max-width:768px){
+
+.job-card{
+padding:5px;
+}
+
+}
+
+
+/* SMALL MOBILE */
+
+@media (max-width:480px){
+
+.job-card h5{
+font-size:16px;
+}
+
+.skill-badge{
+font-size:12px;
+}
+
+}
+
+</style>
+
+
+{% endblock %}

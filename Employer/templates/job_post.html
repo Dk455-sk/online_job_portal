@@ -1,0 +1,308 @@
+{% extends "employer_base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid">
+
+<!-- PAGE TITLE -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+
+<div>
+<h3 class="fw-bold mb-0">Post a Job</h3>
+<small class="text-muted">Create a new job listing for candidates</small>
+</div>
+
+</div>
+
+
+<div class="row justify-content-center">
+
+<div class="col-xl-10 col-lg-11">
+
+<!-- CARD -->
+<div class="card shadow-sm border-0 rounded-4">
+
+<div class="card-body p-4">
+
+<form method="post">
+{% csrf_token %}
+
+<div class="row g-3">
+
+
+<!-- COMPANY NAME -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Company Name</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-building"></i>
+</span>
+
+<input type="text"
+class="form-control"
+value="{{ empdata.company_Name }}"
+readonly>
+
+</div>
+
+</div>
+
+
+<!-- COMPANY DETAILS -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Company Details</label>
+
+<textarea class="form-control"
+rows="1"
+readonly>{{ empdata.company_details }}</textarea>
+
+</div>
+
+
+<!-- JOB TITLE -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Job Title</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-briefcase-fill"></i>
+</span>
+
+<input type="text"
+class="form-control"
+name="jname"
+placeholder="Python Developer / UI Designer"
+required>
+
+</div>
+
+</div>
+
+
+<!-- JOB TYPE -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Job Type</label>
+
+<select class="form-select" name="jtype" required>
+
+<option value="">Select Job Type</option>
+<option value="FullTime">Full Time</option>
+<option value="PartTime">Part Time</option>
+<option value="Contract">Contract</option>
+<option value="Internship">Internship</option>
+
+</select>
+
+</div>
+
+
+<!-- SKILLS -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Required Skills</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-tools"></i>
+</span>
+
+<input type="text"
+class="form-control"
+name="jskill"
+placeholder="Python, Django, React">
+
+</div>
+
+</div>
+
+
+<!-- EXPERIENCE -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Experience</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-bar-chart"></i>
+</span>
+
+<input type="text"
+class="form-control"
+name="exp"
+placeholder="2 - 4 Years">
+
+</div>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Location</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-geo-alt"></i>
+</span>
+
+<input type="text"
+class="form-control"
+name="loc"
+placeholder="Bangalore / Remote">
+
+</div>
+
+</div>
+
+
+<!-- QUALIFICATION -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Qualification</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-mortarboard"></i>
+</span>
+
+<input type="text"
+class="form-control"
+name="qualify"
+placeholder="B.Tech / MCA">
+
+</div>
+
+</div>
+
+
+<!-- VACANCIES -->
+
+<div class="col-md-6">
+
+<label class="form-label fw-semibold">Vacancies</label>
+
+<div class="input-group">
+
+<span class="input-group-text">
+<i class="bi bi-person-plus"></i>
+</span>
+
+<input type="number"
+class="form-control"
+name="vacancy"
+placeholder="3"
+required>
+
+</div>
+
+</div>
+
+
+<!-- OPENING DATE -->
+
+<div class="col-md-3 col-sm-6">
+
+<label class="form-label fw-semibold">Opening Date</label>
+
+<input type="date"
+class="form-control"
+name="odate"
+required>
+
+</div>
+
+
+<!-- CLOSING DATE -->
+
+<div class="col-md-3 col-sm-6">
+
+<label class="form-label fw-semibold">Closing Date</label>
+
+<input type="date"
+class="form-control"
+name="cdate"
+required>
+
+</div>
+
+
+<!-- SUBMIT BUTTON -->
+
+<div class="col-12 text-center mt-4">
+
+<button class="btn btn-primary px-5 py-2 rounded-pill shadow-sm">
+
+<i class="bi bi-cloud-upload me-2"></i>
+Post Job
+
+</button>
+
+</div>
+
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<style>
+
+.card{
+border-radius:14px;
+}
+
+.form-control,
+.form-select{
+border-radius:8px;
+padding:10px;
+}
+
+.input-group-text{
+background:#f1f5f9;
+}
+
+@media (max-width:768px){
+
+.card-body{
+padding:20px;
+}
+
+h3{
+font-size:20px;
+}
+
+}
+
+</style>
+
+{% endblock %}

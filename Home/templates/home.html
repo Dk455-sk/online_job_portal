@@ -1,0 +1,457 @@
+{% extends "hlayout/base.html" %}
+{% load static %}
+
+{% block homeblock %}
+
+<style>
+
+/* HERO SECTION */
+
+.hero-section{
+background:linear-gradient(120deg,#0d6efd,#6610f2);
+color:white;
+padding:90px 0;
+}
+
+/* SEARCH BOX */
+
+.search-box{
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+
+/* JOB CARD */
+
+.job-card{
+border-radius:15px;
+transition:0.3s;
+border:none;
+}
+
+.job-card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* CATEGORY */
+
+.category-card{
+transition:0.3s;
+border-radius:12px;
+cursor:pointer;
+}
+
+.category-card:hover{
+background:#0d6efd;
+color:white;
+transform:scale(1.05);
+}
+
+/* STATS */
+
+.stats{
+background:#f8f9fa;
+}
+.counter{
+font-size:38px;
+font-weight:bold;
+}
+/* MOBILE RESPONSIVE */
+
+@media(max-width:750px){
+
+.hero-section{
+padding:60px 0;
+text-align:center;
+}
+
+.hero-section img{
+margin-top:30px;
+max-width:220px;
+}
+
+.search-box{
+padding:12px;
+}
+
+}
+
+</style>
+
+<!-- HERO SECTION -->
+
+<section class="hero-section">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6 col-md-12 mb-4">
+
+<h1 class="fw-bold display-5">
+Find Your Dream Job
+</h1>
+
+<p class="lead">
+Search thousands of jobs from top companies and apply instantly.
+</p>
+
+<form method="GET" action="{% url 'applyjob_list' %}" class="row g-2 search-box">
+
+<div class="col-md-4 col-12">
+<input type="text" name="keyword" class="form-control" placeholder="Job / Skill">
+</div>
+
+<div class="col-md-3 col-12">
+<input type="text" name="location" class="form-control" placeholder="Location">
+</div>
+
+<div class="col-md-3 col-12">
+<select name="type" class="form-select">
+<option value="">Job Type</option>
+<option value="FullTime">Full Time</option>
+<option value="PartTime">Part Time</option>
+<option value="Contract">Contract</option>
+<option value="Internship">Internship</option>
+</select>
+</div>
+
+<div class="col-md-2 col-12">
+<button class="btn btn-dark w-100">Search</button>
+</div>
+
+</form>
+
+</div>
+
+
+<div class="col-lg-6 col-md-12 text-center">
+
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+class="img-fluid"
+width="300">
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- STATS SECTION -->
+
+<section class="stats py-4">
+
+<div class="container text-center">
+
+<div class="row">
+
+<!-- JOBS -->
+
+<div class="col-md-4 col-12 mb-3">
+
+<h3 class="fw-bold text-primary counter" data-target="{{ total_jobs }}">
+0
+</h3>
+
+<p>Jobs Available</p>
+
+</div>
+
+
+<!-- COMPANIES -->
+
+<div class="col-md-4 col-12 mb-3">
+
+<h3 class="fw-bold text-success counter" data-target="{{ total_companies }}">
+0
+</h3>
+
+<p>Companies</p>
+
+</div>
+
+
+<!-- JOBSEEKERS -->
+
+<div class="col-md-4 col-12 mb-3">
+
+<h3 class="fw-bold text-danger counter" data-target="{{ total_jobseekers }}">
+0
+</h3>
+
+<p>Job Seekers</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- JOB CATEGORIES -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="text-center mb-4">
+Popular Job Categories
+</h2>
+
+<div class="row text-center g-3">
+
+<div class="col-lg-3 col-md-6 col-12">
+
+<div class="card category-card p-3 shadow-sm">
+
+<h5>💻 IT & Software</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6 col-12">
+
+<div class="card category-card p-3 shadow-sm">
+
+<h5>📊 Marketing</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6 col-12">
+
+<div class="card category-card p-3 shadow-sm">
+
+<h5>🏥 Healthcare</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6 col-12">
+
+<div class="card category-card p-3 shadow-sm">
+
+<h5>🎓 Education</h5>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- LATEST JOBS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="text-center mb-5 fw-bold">
+🔥 Latest Job Openings
+</h2>
+
+<div class="row g-4">
+
+{% for job in jobs %}
+
+<div class="col-lg-4 col-md-6 col-12">
+
+<div class="card job-card shadow">
+
+<div class="card-body">
+
+<h5 class="fw-bold text-primary">
+{{ job.Job_name }}
+</h5>
+
+<p class="mb-1">
+🏢 {{ job.employee.company_Name }}
+</p>
+
+<p class="mb-1">
+📍 {{ job.Location }}
+</p>
+
+<p class="mb-1">
+🎓 {{ job.Qualification }}
+</p>
+
+<p>
+💼 {{ job.Experience }} Years Experience
+</p>
+
+<div class="d-flex justify-content-between align-items-center">
+
+<span class="badge bg-success">
+{{ job.Job_Type }}
+</span>
+
+{% if request.session.email %}
+
+<form method="POST" action="{% url 'applyjob_list' %}">
+{% csrf_token %}
+
+<input type="hidden" name="job_id" value="{{ job.id }}">
+
+<button class="btn btn-primary btn-sm">
+Apply Now
+</button>
+
+</form>
+
+{% else %}
+
+<a href="{% url 'login' %}" class="btn btn-warning btn-sm">
+Login to Apply
+</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+<div class="alert alert-warning text-center">
+
+No jobs available right now
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- TESTIMONIALS -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="text-center mb-4">
+What Job Seekers Say
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4 col-12">
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
+<p>"I got hired in just 1 week!"</p>
+
+<b>Rahul</b>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4 col-12">
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
+<p>"Very easy to apply for jobs."</p>
+
+<b>Priya</b>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-md-4 col-12">
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
+<p>"Best job portal for freshers."</p>
+
+<b>Arjun</b>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<script>
+
+const counters = document.querySelectorAll(".counter");
+
+counters.forEach(counter => {
+
+const updateCounter = () => {
+
+const target = +counter.getAttribute("data-target");
+
+const current = +counter.innerText;
+
+const increment = target / 100;
+
+if(current < target){
+
+counter.innerText = Math.ceil(current + increment);
+
+setTimeout(updateCounter,20);
+
+}else{
+
+counter.innerText = target;
+
+}
+
+};
+
+updateCounter();
+
+});
+
+</script>
+
+{% endblock %}

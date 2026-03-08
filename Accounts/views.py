@@ -4,20 +4,57 @@ from Employer.models import PostJob, Emp_profile_update
 from .models import Register_master,Jobseeker_Profile
 from Job .models import JobApplication,PostJob,SavedJob
 from django.contrib import messages
+from django.views.decorators.cache import never_cache
 # Create your views here.
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.urls import reverse
 
 def job_detail(request, id):
 
     job = get_object_or_404(PostJob, id=id)
 
+    if request.method == "POST":
+
+        email = request.session.get("email")
+
+        if not email:
+            return JsonResponse({
+                "status": "error",
+                "message": "Please login first"
+            })
+
+        user = Register_master.objects.get(email=email)
+
+        # prevent duplicate apply
+        already_applied = JobApplication.objects.filter(
+            applicant=user,
+            job=job
+        ).exists()
+
+        if already_applied:
+            return JsonResponse({
+                "status": "error",
+                "message": "You already applied for this job"
+            })
+
+        JobApplication.objects.create(
+            applicant=user,
+            job=job,
+            status="Pending",
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Job applied successfully"
+        })
+
     return render(request, "job_detail.html", {
         "job": job
     })
-
 def remove_saved_job(request):
 
     if request.method == "POST":
@@ -27,12 +64,18 @@ def remove_saved_job(request):
         try:
             saved_job = SavedJob.objects.get(id=saved_id)
             saved_job.delete()
-            messages.success(request, "Saved job removed successfully!")
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Saved job removed successfully"
+            })
 
         except SavedJob.DoesNotExist:
-            messages.warning(request, "Saved job not found")
 
-    return redirect("saved_jobs")
+            return JsonResponse({
+                "status": "error",
+                "message": "Saved job not found"
+            })
 
 def saved_jobs(request):
 
@@ -53,11 +96,13 @@ def saved_jobs(request):
 
     return render(request, "saved_jobs.html", {"saved": saved})
 
-@login_required
+
+# @login_required
 def applyjob_list(request):
 
     jobs = PostJob.objects.all()
 
+    # FILTERING
     keyword = request.GET.get("keyword")
     location = request.GET.get("location")
     job_type = request.GET.get("type")
@@ -77,44 +122,66 @@ def applyjob_list(request):
 
     if request.method == "POST":
 
+        email = request.session.get("email")
+
+        if not email:
+            return JsonResponse({
+                "status": "error",
+                "message": "Please login first"
+            })
+
+        user = Register_master.objects.get(email=email)
+
         job_id = request.POST.get("job_id")
         action = request.POST.get("action")
 
         job = PostJob.objects.get(id=job_id)
 
-        user_email = request.session["email"]
-        if not user_email:
-            return redirect("login")
-        user_obj = Register_master.objects.get(email=user_email)
-
-        # APPLY JOB
         if action == "apply":
 
-            if JobApplication.objects.filter(job=job, applicant=user_obj).exists():
-                messages.warning(request, "You already applied for this job")
-            else:
-                JobApplication.objects.create(job=job, applicant=user_obj)
-                messages.success(request, "Job Applied Successfully!")
+            if JobApplication.objects.filter(job=job, applicant=user).exists():
+                return JsonResponse({
+                    "status": "warning",
+                    "message": "You already applied for this job"
+                })
 
-        # SAVE JOB
+            JobApplication.objects.create(job=job, applicant=user,status="Pending")
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Job applied successfully"
+            })
+
         elif action == "save":
 
-            if SavedJob.objects.filter(job=job, user=user_obj).exists():
-                messages.warning(request, "Job already saved")
-            else:
-                SavedJob.objects.create(job=job, user=user_obj)
-                messages.success(request, "Job Saved Successfully!")
+            if SavedJob.objects.filter(job=job, user=user).exists():
+                return JsonResponse({
+                    "status": "warning",
+                    "message": "Job already saved"
+                })
 
-        return redirect("applyjob_list")
+            SavedJob.objects.create(job=job, user=user)
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Job saved successfully"
+            })
 
     return render(request, "applyjob_list.html", {"edata": jobs})
             
 
 def jobseeker_profile(request):
+
     email = request.session.get("email")
+
     if not email:
-        return redirect("login")  # Optional safety check
-    user = Register_master.objects.get(email=email)
+        return redirect("login")
+
+    try:
+        user = Register_master.objects.get(email=email)
+    except Register_master.DoesNotExist:
+        messages.error(request, "User not found")
+        return redirect("login")
 
     try:
         profile = Jobseeker_Profile.objects.get(user=user)
@@ -122,40 +189,63 @@ def jobseeker_profile(request):
         profile = None
 
     if request.method == "POST":
+
+        # Update user info
         user.name = request.POST.get("name")
         user.password = request.POST.get("pwd")
         user.mobile = request.POST.get("mobile")
         user.address = request.POST.get("adds")
         user.save()
 
+        skills = request.POST.get("skills")
+        experience = request.POST.get("experience_years")
+        qualification = request.POST.get("qualification")
+        location = request.POST.get("preffered_location")
+
+        resume = request.FILES.get("resume")
+        photo = request.FILES.get("profile_photo")
+        idproof = request.FILES.get("Id_proof")
+
         if profile:
-            profile.skills = request.POST.get("skills")
-            profile.experience_years = request.POST.get("experience_years")
-            profile.qualification = request.POST.get("qualification")
-            profile.preffered_location= request.POST.get("preffered_location")
 
-            if request.FILES.get("resume"):
-                profile.resume = request.FILES.get("resume")
+            profile.skills = skills
+            profile.experience_years = experience
+            profile.qualification = qualification
+            profile.preffered_location = location
 
-            if request.FILES.get("Id_proof"):
-                profile.Id_proof = request.FILES.get("Id_proof")
+            if resume:
+                profile.resume = resume
+
+            if photo:
+                profile.Image = photo
+
+            if idproof:
+                profile.Id_proof = idproof
 
             profile.save()
 
         else:
-            Jobseeker_Profile.objects.create(
+
+            profile = Jobseeker_Profile.objects.create(
                 user=user,
-                skills=request.POST.get("skills"),
-                experience_years=request.POST.get("experience_years"),
-                qualification=request.POST.get("qualification"),
-                preffered_location=request.POST.get("preffered_location"),
-                resume=request.FILES.get("resume"),
-                Id_proof=request.FILES.get("Id_proof"),
+                skills=skills,
+                experience_years=experience,
+                qualification=qualification,
+                preffered_location=location,
+                resume=resume,
+                Image=photo,
+                Id_proof=idproof
             )
 
+        messages.success(request, "Profile updated successfully")
         return redirect("jobseeker_profile")
 
-    return render(request, "jobseeker_profile.html", {"data": user, "profile": profile})
+    context = {
+        "data": user,
+        "profile": profile
+    }
+
+    return render(request, "jobseeker_profile.html", context)
 
 
 
@@ -164,7 +254,9 @@ def viewdata(request):
     ob=Register_master.objects.all()
     return render(request,"viewdata.html",{"data":ob})
 
+@never_cache
 def employer_dashboard(request):
+
     # Get logged-in employer's email from session
     email = request.session.get("email")
     if not email:
@@ -186,9 +278,8 @@ def employer_dashboard(request):
         "ename": ob.name,
         "edata": jobs
     })
-# def jobseeker_dashboard(request):
-#     name=request.session.get("name")
-#     return render(request,"jobseeker_dashboard.html",{"jname":name})
+
+
 def jobseeker_dashboard(request):
 
     email = request.session.get("email")
@@ -200,6 +291,7 @@ def jobseeker_dashboard(request):
 
     # latest jobs
     jobs = PostJob.objects.all().order_by("-id")[:6]
+
     # statistics
     applied_count = JobApplication.objects.filter(applicant=user).count()
     saved_count = SavedJob.objects.filter(user=user).count()
@@ -214,43 +306,68 @@ def jobseeker_dashboard(request):
     return render(request, "jobseeker_dashboard.html", context)
 
 def Register(request):
-    msg=""
-    if request.method=="POST":
-        formobj=registerform(request.POST)
+
+    if request.method == "POST":
+
+        formobj = registerform(request.POST)
+
         if formobj.is_valid():
             formobj.save()
-            msg="Register success...."
+
+            return JsonResponse({
+                "status": "success",
+                "message": "Registration successful"
+            })
+
         else:
-            msg="Register fail..."
-    formobj=registerform()
-    
-            
-    return render(request,"register.html",{"form":formobj,"msg":msg})
+            return JsonResponse({
+                "status": "error",
+                "message": "Registration failed"
+            })
+
+    formobj = registerform()
+
+    return render(request, "register.html", {"form": formobj})
 
 
 
 def Login(request):
-    if request.method=="POST":
-        formobj=loginform(request.POST)
-        email=formobj.data.get("email")
-        password=formobj.data.get("password")
+
+    if request.method == "POST":
+
+        formobj = loginform(request.POST)
+
+        email = formobj.data.get("email")
+        password = formobj.data.get("password")
+
         try:
-            ob=Register_master.objects.get(email=email,password=password)
-            request.session["name"]=ob.name
-            request.session["email"]=ob.email
+            ob = Register_master.objects.get(email=email, password=password)
 
-            if ob.rolename=="jobseeker":
-                return redirect("jobseeker_dashboard")
+            request.session["name"] = ob.name
+            request.session["email"] = ob.email
 
-            elif ob.rolename=="employer":
-                return redirect("employer_dashboard")
+            if ob.rolename == "jobseeker":
+                return JsonResponse({
+                    "status": "success",
+                    "redirect": reverse("jobseeker_dashboard")
+                })
 
-        except Exception as e:
-            return render(request,"login.html",
-                          {"msg":"invalid username & password"})
+            elif ob.rolename == "employer":
+                return JsonResponse({
+                    "status": "success",
+                    "redirect": reverse("employer_dashboard")
+                })
 
-    formobj=loginform()
-    return render(request,"login.html",{'form':formobj})
+        except Register_master.DoesNotExist:
+
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid username or password"
+            })
+
+    formobj = loginform()
+
+    return render(request, "login.html", {"form": formobj})
 
 def Logout(request):
     request.session.flush()   # Clears all session data

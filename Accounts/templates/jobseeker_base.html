@@ -6,6 +6,9 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 <title>Job Seeker Dashboard</title>
 
@@ -28,7 +31,7 @@ left:0;
 top:0;
 height:100%;
 width:240px;
-background:#111827;
+background:#060ef1;
 color:white;
 transition:0.3s;
 z-index:1000;
@@ -69,7 +72,7 @@ transition:0.3s;
 /* ===== TOP NAVBAR ===== */
 
 .topbar{
-background:white;
+background:#5258fa;
 padding:10px 20px;
 border-radius:8px;
 box-shadow:0 2px 6px rgba(0,0,0,0.05);
@@ -80,7 +83,7 @@ align-items:center;
 }
 
 .toggle-btn{
-font-size:20px;
+font-size:2opx;
 cursor:pointer;
 }
 
@@ -113,7 +116,7 @@ margin-left:0;
 
 <div class="sidebar" id="sidebar">
 
-<h4>Job Portal</h4>
+<h4>JobSeeker Panel</h4>
 
 <a href="{% url 'jobseeker_dashboard' %}">
 <i class="bi bi-speedometer2"></i> Dashboard
@@ -157,7 +160,7 @@ margin-left:0;
 <div>
 
 <span class="text-muted me-3">
-<i class="bi bi-person-circle"></i> Job Seeker
+<i class="bi bi-person-circle"></i>{{ jname|title }}
 </span>
 
 </div>

@@ -11,7 +11,7 @@ class JobApplication(models.Model):
     job=models.ForeignKey(PostJob,on_delete=models.CASCADE)
     applicant=models.ForeignKey(Register_master,on_delete=models.CASCADE)
     applied_date=models.DateTimeField(auto_now_add=True)
-    status=models.CharField(max_length=30,choices=STATUS_CHOICE,default="pending")
+    status=models.CharField(max_length=30,choices=STATUS_CHOICE,default="Pending")
 
     def __str__(self):
         return f"{self.applicant} applied for {self.job.Job_name}"

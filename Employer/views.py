@@ -131,6 +131,8 @@ def Job_delete(request, id):
 
 def Emp_profile(request):
     email = request.session.get("email")
+    if not email:
+        return redirect("login")
     ob = Register_master.objects.get(email=email)
 
     # Try to get the profile, else None
@@ -142,7 +144,9 @@ def Emp_profile(request):
     if request.method == "POST":
         # Update basic user info
         ob.name = request.POST.get("name")
-        ob.password = request.POST.get("pwd")
+        pwd = request.POST.get("pwd")
+        if pwd:
+            ob.password = pwd
         ob.mobile = request.POST.get("mobile")
         ob.address = request.POST.get("adds")
         ob.save()

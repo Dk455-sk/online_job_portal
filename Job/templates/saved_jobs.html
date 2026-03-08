@@ -27,7 +27,7 @@
 
 {% for job in saved %}
 
-<div class="col-md-6">
+<div class="col-md-6 saved-card-{{ job.id }}">
 
 <div class="card job-card shadow-sm border-0">
 
@@ -102,18 +102,14 @@ View Job
 </a>
 
 
-<!-- REMOVE -->
+<!-- REMOVE BUTTON -->
 
-<form method="post" action="{% url 'remove_saved_job' %}">
-{% csrf_token %}
+<button class="btn btn-outline-danger btn-sm remove-btn"
+data-id="{{ job.id }}">
 
-<input type="hidden" name="saved_id" value="{{ job.id }}">
-
-<button class="btn btn-outline-danger btn-sm">
 <i class="bi bi-trash"></i> Remove
-</button>
 
-</form>
+</button>
 
 </div>
 
@@ -176,5 +172,49 @@ padding:6px 10px;
 }
 
 </style>
+
+
+<!-- AJAX SCRIPT -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+$(".remove-btn").click(function(){
+
+let saved_id = $(this).data("id")
+
+$.ajax({
+
+url: "{% url 'remove_saved_job' %}",
+
+type: "POST",
+
+data:{
+
+saved_id: saved_id,
+csrfmiddlewaretoken: "{{ csrf_token }}"
+
+},
+
+success:function(response){
+
+if(response.status == "success"){
+
+$(".saved-card-"+saved_id).fadeOut(400)
+
+}else{
+
+alert(response.message)
+
+}
+
+}
+
+})
+
+})
+
+</script>
 
 {% endblock %}

@@ -174,6 +174,6 @@ def Emp_profile(request):
                 company_website = request.POST.get("cweb"),
             )
 
-        return redirect("empprofile")  # make sure 'emp_profile' URL exists
+        return redirect("empprofile")  
 
     return render(request, "emp_profile.html", {"data": ob, "profile": profile})

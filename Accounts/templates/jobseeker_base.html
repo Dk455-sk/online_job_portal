@@ -6,9 +6,6 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 
 <title>Job Seeker Dashboard</title>
 
@@ -21,86 +18,146 @@ body{
 background:#f4f6f9;
 margin:0;
 font-family:system-ui;
+overflow-x:hidden;
 }
 
-/* ===== SIDEBAR ===== */
+/* =======================
+SIDEBAR
+======================= */
 
 .sidebar{
+
 position:fixed;
-left:0;
 top:0;
+left:0;
 height:100%;
 width:240px;
-background:#060ef1;
+background:#1e3a8a;
 color:white;
-transition:0.3s;
+transition:all .3s ease;
 z-index:1000;
+
 }
 
 .sidebar h4{
+
 text-align:center;
 padding:20px;
-border-bottom:1px solid #374151;
+border-bottom:1px solid rgba(255,255,255,0.2);
+
 }
 
 .sidebar a{
+
 display:block;
 color:#d1d5db;
 padding:14px 20px;
 text-decoration:none;
 font-size:15px;
-transition:0.2s;
+transition:.2s;
+
 }
 
 .sidebar a:hover{
-background:#1f2937;
+
+background:#1e40af;
 color:white;
+
 }
 
-.sidebar a i{
+.sidebar i{
+
 margin-right:8px;
+
 }
 
-/* ===== MAIN AREA ===== */
+/* =======================
+MAIN CONTENT
+======================= */
 
 .main{
+
 margin-left:240px;
 padding:25px;
-transition:0.3s;
+transition:.3s;
+
 }
 
-/* ===== TOP NAVBAR ===== */
+/* =======================
+TOPBAR
+======================= */
 
 .topbar{
-background:#5258fa;
-padding:10px 20px;
+
+background:white;
+padding:12px 20px;
 border-radius:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.05);
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
 margin-bottom:20px;
-display:flex;
+display:none;
 justify-content:space-between;
 align-items:center;
+
 }
 
 .toggle-btn{
-font-size:2opx;
+
+font-size:22px;
 cursor:pointer;
+
 }
 
-/* ===== MOBILE VIEW ===== */
+/* =======================
+OVERLAY
+======================= */
+
+.overlay{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+z-index:900;
+
+}
+
+.overlay.active{
+
+display:block;
+
+}
+
+/* =======================
+MOBILE VIEW
+======================= */
 
 @media(max-width:992px){
 
 .sidebar{
+
 left:-240px;
+
 }
 
 .sidebar.active{
+
 left:0;
+
 }
 
 .main{
+
 margin-left:0;
+
+}
+
+.topbar{
+
+display:flex;
+
 }
 
 }
@@ -144,12 +201,16 @@ margin-left:0;
 
 </div>
 
+<!-- OVERLAY -->
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
 
 <!-- MAIN CONTENT -->
 
 <div class="main">
 
-<!-- TOP BAR -->
+<!-- TOPBAR -->
 
 <div class="topbar">
 
@@ -159,8 +220,8 @@ margin-left:0;
 
 <div>
 
-<span class="text-muted me-3">
-<i class="bi bi-person-circle"></i>{{ jname|title }}
+<span class="text-muted">
+<i class="bi bi-person-circle"></i> {{ jname|title }}
 </span>
 
 </div>
@@ -181,9 +242,41 @@ margin-left:0;
 
 function toggleSidebar(){
 
-document.getElementById("sidebar").classList.toggle("active")
+let sidebar = document.getElementById("sidebar")
+let overlay = document.getElementById("overlay")
+
+sidebar.classList.toggle("active")
+overlay.classList.toggle("active")
 
 }
+
+function closeSidebar(){
+
+let sidebar = document.getElementById("sidebar")
+let overlay = document.getElementById("overlay")
+
+sidebar.classList.remove("active")
+overlay.classList.remove("active")
+
+}
+
+/* Auto close sidebar when menu clicked (mobile) */
+
+let links = document.querySelectorAll(".sidebar a")
+
+links.forEach(link => {
+
+link.addEventListener("click", () => {
+
+if(window.innerWidth < 992){
+
+closeSidebar()
+
+}
+
+})
+
+})
 
 </script>
 
